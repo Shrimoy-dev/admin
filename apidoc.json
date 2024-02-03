@@ -1,0 +1,9 @@
+{
+    "name": "API Documentation",
+    "version": "1.0.0",
+    "description": "API",
+    "url": "http://127.0.0.1:1111/api",
+    "template": {
+        "forceLanguage": "en"
+    }
+}

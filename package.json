@@ -1,0 +1,136 @@
+{
+    "name": "admin",
+    "version": "1.0.0",
+    "description": "",
+    "main": "admin.js",
+    "scripts": {
+        "test": "jest --force-exit --watchAll --verbose ./tests",
+        "test:watch": "jest --watch --detectOpenHandles",
+        "test:cov": "jest --coverage --force-exit --detectOpenHandles",
+        "coverage": "jest --coverage --force-exit --detectOpenHandles",
+        "start": "npx nodemon admin.js",
+        "dev": "NODE_ENV=dev npx nodemon admin.js",
+        "prod": "NODE_ENV=prod npx forever start admin.js"
+    },
+    "engines": {
+        "node": ">=14.x",
+        "npm": ">=6.x"
+    },
+    "os": [
+        "darwin",
+        "linux",
+        "win32"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@mongoosejs/double": "^0.3.0",
+        "@sendgrid/mail": "^7.7.0",
+        "apn": "^2.2.0",
+        "app-module-path": "^2.2.0",
+        "app-root-path": "^3.1.0",
+        "async": "^3.2.4",
+        "async-request": "^1.2.0",
+        "axios": "^0.27.2",
+        "base64url": "^3.0.1",
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.20.0",
+        "connect-flash": "^0.1.1",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "countries-list": "^2.6.1",
+        "countrycitystatejson": "^20.8.14",
+        "crypto-js": "^4.1.1",
+        "cryptr": "^6.0.3",
+        "dotenv": "^16.0.2",
+        "ejs": "^3.1.8",
+        "ejs-locals": "^1.0.2",
+        "email-templates": "^10.0.1",
+        "emojione": "^4.5.0",
+        "express": "^4.18.1",
+        "express-session": "^1.17.3",
+        "express-validator": "^7.0.1",
+        "express-winston": "^4.2.0",
+        "fcm-push": "^1.1.3",
+        "fs": "^0.0.1-security",
+        "geodist": "^0.2.1",
+        "geoip-lite": "^1.4.6",
+        "jest": "^28.1.3",
+        "jest-html-reporter": "^3.6.0",
+        "jsonwebtoken": "^8.5.1",
+        "libphonenumber-js": "^1.10.13",
+        "lodash": "^4.17.21",
+        "moment": "^2.29.4",
+        "moment-timezone": "^0.5.37",
+        "mongoose": "^6.5.4",
+        "mongoose-aggregate-paginate": "^2.0.2",
+        "mongoose-aggregate-paginate-v2": "^1.0.6",
+        "mongoose-beautiful-unique-validation": "^7.1.1",
+        "mongoose-paginate": "^5.0.3",
+        "mongoose-pagination": "^1.0.0",
+        "mongoose-slug-updater": "^3.3.0",
+        "multer": "^1.4.5-lts.1",
+        "multer-s3": "^3.0.1",
+        "named-routes": "^2.0.7",
+        "node-fetch": "^3.2.10",
+        "nodemailer": "^6.9.8",
+        "nodemon": "^2.0.19",
+        "otp-generator": "^4.0.0",
+        "passport": "^0.6.0",
+        "passport-jwt": "^4.0.0",
+        "passport-local": "^1.0.0",
+        "path": "^0.12.7",
+        "q": "^1.5.1",
+        "request": "^2.88.2",
+        "request-ip": "^3.3.0",
+        "route-label": "^1.2.3",
+        "sharp": "^0.31.0",
+        "slug": "^8.0.0",
+        "slugify": "^1.6.5",
+        "supertest": "^6.2.4",
+        "swagger-jsdoc": "^6.2.5",
+        "swagger-model-validator": "^3.0.21",
+        "swagger-ui-express": "^4.5.0",
+        "timezones-list": "^3.0.1",
+        "tunnel-ssh": "^4.1.6",
+        "ua-parser-js": "^1.0.2",
+        "underscore": "^1.13.4",
+        "url-exists": "^1.0.3",
+        "uuid": "^9.0.0",
+        "web-push": "^3.5.0",
+        "winston": "^3.8.1",
+        "winston-daily-rotate-file": "^4.7.1",
+        "ytdl-core": "^4.11.2"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "rootDir": "./",
+        "moduleDirectories": [
+            "app/modules",
+            "node_modules"
+        ],
+        "reporters": [
+            "default",
+            [
+                "./node_modules/jest-html-reporter",
+                {
+                    "publicPath": "./html-report",
+                    "filename": "report.html",
+                    "outputPath": "public/test-report.html",
+                    "openReport": true
+                }
+            ]
+        ]
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "public/*",
+            "node_modules/*"
+        ]
+    },
+    "devDependencies": {
+        "apidoc": "^0.52.0",
+        "forever": "^4.0.3",
+        "npx": "^10.2.2"
+    }
+}
