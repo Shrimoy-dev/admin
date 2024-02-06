@@ -24,7 +24,7 @@
     ],
     "author": "",
     "license": "ISC",
-    "dependencies": {
+    "dependenodencies": {
         "@mongoosejs/double": "^0.3.0",
         "@sendgrid/mail": "^7.7.0",
         "apn": "^2.2.0",
