@@ -6,7 +6,7 @@
     "scripts": {
         "test": "jest --force-exit --watchAll --verbose ./tests",
         "test:watch": "jest --watch --detectOpenHandles",
-        "start": "npx nodemon admin.js",
+        "start": "node admin.js",
         "test:cov": "jest --coverage --force-exit --detectOpenHandles",
         "coverage": "jest --coverage --force-exit --detectOpenHandles",
         "zzz": "npx nodemon admin.js",
@@ -14,7 +14,7 @@
         "prod": "NODE_ENV=prod npx forever start admin.js"
     },
     "engines": {
-        "node": ">=14.x",
+        "node": "14.x",
         "npm": ">=6.x"
     },
     "os": [
