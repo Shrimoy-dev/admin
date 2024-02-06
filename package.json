@@ -6,9 +6,10 @@
     "scripts": {
         "test": "jest --force-exit --watchAll --verbose ./tests",
         "test:watch": "jest --watch --detectOpenHandles",
+        "start": "npx nodemon admin.js",
         "test:cov": "jest --coverage --force-exit --detectOpenHandles",
         "coverage": "jest --coverage --force-exit --detectOpenHandles",
-        "start": "npx nodemon admin.js",
+        "zzz": "npx nodemon admin.js",
         "dev": "NODE_ENV=dev npx nodemon admin.js",
         "prod": "NODE_ENV=prod npx forever start admin.js"
     },
