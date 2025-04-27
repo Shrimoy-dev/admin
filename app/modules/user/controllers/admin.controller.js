@@ -147,6 +147,47 @@ class AdminController {
                 return requestHandler.sendError(req, res, e);
             }
         }
+
+        async getAllUsers (req, res) {
+            try {
+                if (req.user.role.role !== 'admin') {
+                    return requestHandler.throwError(403, 'Forbidden', 'You are not authorized to access this resource.')();
+                }
+                let role = await roleRepo.getByField({ role: "user" });
+                req.body.role = role.role;
+                let users = await userRepo.getAllUsers(req);
+                if (_.isNull(users) && _.isEmpty(users)) {
+                    return requestHandler.throwError(404, 'Not Found', 'No users found.')();
+                } else {
+                  return  requestHandler.sendSuccess(res, "User list fetched successfully.")(users);
+                }
+               
+            } catch (error) {
+                return requestHandler.sendError(req, res, error);
+            }
+        }
+
+        async getUserDetails (req, res) {
+            try {
+                console.log('getUserDetails', req.query);
+                
+                if (!req.query?.id?.trim()) {
+                    return requestHandler.throwError(400, 'Bad Request', 'User id is required.')();
+                }
+                if (req.user.role.role !== 'admin') {
+                    return requestHandler.throwError(403, 'Forbidden', 'You are not authorized to access this resource.')();
+                }
+                let user = await userRepo.getUserDetails(req.query.id);
+                if (_.isNull(user) && _.isEmpty(user)) {
+                    return requestHandler.throwError(404, 'Not Found', 'No users found.')();
+                } else {
+                  return  requestHandler.sendSuccess(res, "User details fetched successfully.")(user[0]);
+                }
+               
+            } catch (error) {
+                return requestHandler.sendError(req, res, error);
+            }
+        }
 }
 
 module.exports = new AdminController();

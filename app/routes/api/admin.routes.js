@@ -35,4 +35,8 @@ namedRouter.post('api.admin.resetPassword', '/admin/reset-password', request_par
 
 namedRouter.all('/admin*', auth.authenticateAPI);
 
+namedRouter.post('api.admin.userList', '/admin/user-list', uploadFile.any(), adminController.getAllUsers);
+
+namedRouter.get('api.admin.userDetails', '/admin/user-details', request_param.any(), adminController.getUserDetails);
+
 module.exports = router;

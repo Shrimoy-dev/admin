@@ -43,26 +43,18 @@ const userRepository = {
         try {
             let conditions = {};
             let and_clauses = [];
-
+           
+            
             and_clauses.push({ "isDeleted": false, parent_id: null });
             and_clauses.push({ "user_role.role": req.body.role });
 
-            if (_.isObject(req.body.search) && _.has(req.body.search, 'value')) {
+            if (_.isObject(req.body) && _.has(req.body, 'search')) {
                 and_clauses.push({
                     $or: [
-                        { 'fullName': { $regex: req.body.search.value.trim(), $options: 'i' } },
-                        { 'email': { $regex: '^' + req.body.search.value.trim(), $options: 'i' } },
+                        { 'fullName': { $regex: req.body.search.trim(), $options: 'i' } },
+                        { 'email': { $regex: '^' + req.body.search.trim(), $options: 'i' } },
                     ]
                 });
-            }
-
-            if (req.body.columns && req.body.columns.length) {
-                let statusFilter = _.findWhere(req.body.columns, { data: 'status' });
-                if (statusFilter && statusFilter.search && statusFilter.search.value) {
-                    and_clauses.push({
-                        "status": statusFilter.search.value
-                    });
-                }
             }
 
             conditions['$and'] = and_clauses;
@@ -115,12 +107,12 @@ const userRepository = {
                         '_id': '$_id',
                         'fullName': { $first: '$fullName' },
                         'email': { $first: '$email' },
+                        'isOtpVerified': { $first: '$isOtpVerified' },
                         'isDeleted': { $first: '$isDeleted' },
                         'status': { $first: '$status' },
                         'user_role': { $first: '$user_role' },
                         'profile_image': { $first: '$profile_image' },
                         'createdAt': { $first: '$createdAt' },
-                        'parent_id':{$first:'$parent_id'}
                     }
                 },
                 { $match: conditions },
@@ -157,10 +149,12 @@ const userRepository = {
         }
     },
 
-    getUserDetails: async (params) => {
+    getUserDetails: async (id) => {
         try {
+            let userId = mongoose.Types.ObjectId(id)
             let aggregate = await User.aggregate([
-                { $match: params },
+                { $match: { _id: userId, isDeleted: false } },
+                
                 {
                     $lookup: {
                         "from": "roles",
@@ -188,6 +182,67 @@ const userRepository = {
                     }
                 },
                 { "$unwind": "$role" },
+                //lookup to get user package details
+                {
+                    $lookup: {
+                        "from": "user_packages",
+                        let: { userId:userId },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$userId", "$$userId"] },
+                                            { $eq: ["$isDeleted", false] },
+                                        ]
+                                    }
+                                }
+                            },
+                            //lookup to get package details
+                            {
+                                $lookup: {
+                                    "from": "packages",
+                                    let: { packageId: "$packageId" },
+                                    pipeline: [
+                                        {
+                                            $match: {
+                                                $expr: {
+                                                    $and: [
+                                                        { $eq: ["$_id", "$$packageId"] },
+                                                        { $eq: ["$isDeleted", false] }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            $project: {
+                                                _id: "$_id",
+                                                title: "$title",
+                                                description: "$description",
+                                                amount: "$amount",
+                                                status: "$status"
+                                            }
+                                        }
+                                    ],
+                                    "as": "package"
+                                }
+                            },{
+                                $unwind: {
+                                    path: "$package",
+                                    preserveNullAndEmptyArrays: true
+                            }},
+                            {
+                                $project: {
+                                    _id: "$_id",
+                                    currentPeriodStart: "$currentPeriodStart",
+                                    currentPeriodEnd:'$currentPeriodEnd',
+                                    package: "$package",
+                                }
+                            }
+                        ],
+                        "as": "user_packages"
+                    }
+                },
                 {
                     $project: {
                         password: 0,
@@ -201,6 +256,8 @@ const userRepository = {
                     }
                 },
             ]);
+            console.log('aggregate', aggregate);
+            
             if (!aggregate) return null;
             return aggregate;
         } catch (e) {

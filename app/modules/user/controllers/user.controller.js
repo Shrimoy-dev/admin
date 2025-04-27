@@ -131,7 +131,7 @@ class UserController {
 
                 await userRepo.updateById({
                     isOtpVerified: true,
-                    otp: null,
+                    otp: '',
                     otpExpireTime: null
                 }, findUser._id);
                 requestHandler.sendSuccess(res, 'Email verified successfully! Please login to continue')();
