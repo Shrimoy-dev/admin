@@ -102,7 +102,15 @@ app.use((req, res, next) => {
     // add this line to include winston logging
     next();
 });
+app.get('/', function (req, res) {
+    // On getting the home route request,
+    // the user will be redirected to GFG website
+    // console.log('home route called');
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('ADMIN Api!');
 
+    // res.redirect(process.env.FRONTEND_WEBSITE_URL);
+});
 // For Error log 
 app.use(function (err, req, res, next) {
     logger.log(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`, 'error');
@@ -166,9 +174,9 @@ const onError = (error) => {
             console.log(routeList);
         }
 
-        const dbDriver = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.tv2tdgu.mongodb.net/${process.env.DB_DATABASE}`;
-
-const port = process.env.PORT || 1579;
+        // const dbDriver = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}>@cluster0.uub861e.mongodb.net/${process.env.DB_DATABASE}`;
+        const dbDriver = process.env.DB_URI;
+        const port = process.env.PORT || 1579;
 
 await mongoose.connect(dbDriver, {
     useUnifiedTopology: true,

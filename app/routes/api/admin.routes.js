@@ -1,0 +1,38 @@
+const express = require('express');
+const routeLabel = require('route-label');
+const router = express.Router();
+const namedRouter = routeLabel(router);
+const adminController = require('../../modules/user/controllers/admin.controller');
+const multer = require('multer');
+const fs = require('fs');
+
+const Storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        if (!fs.existsSync("./public/uploads/user")) {
+            fs.mkdirSync("./public/uploads/user");
+        }
+        if (!fs.existsSync("./public/uploads/user/profile_pic")) {
+            fs.mkdirSync("./public/uploads/user/profile_pic");
+        }
+        callback(null, "./public/uploads/user/profile_pic");
+
+    },
+    filename: (req, file, callback) => {
+        callback(null, Date.now() + "_" + file.originalname.replace(/\s/g, '_'));
+    }
+});
+
+const uploadFile = multer({
+    storage: Storage
+});
+const request_param = multer();
+
+namedRouter.post('api.admin.signin', '/admin/signin', request_param.any(), adminController.signin);
+
+namedRouter.post('api.admin.forgotPassword', '/admin/forgot-password', request_param.any(), adminController.forgotPassword);
+
+namedRouter.post('api.admin.resetPassword', '/admin/reset-password', request_param.any(), adminController.resetPassword);
+
+namedRouter.all('/admin*', auth.authenticateAPI);
+
+module.exports = router;

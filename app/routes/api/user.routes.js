@@ -79,6 +79,7 @@ const request_param = multer();
 //User signup Route
 namedRouter.post('api.user.signup', '/user/signup', uploadFile.any(), userController.signup);
 
+namedRouter.post('api.user.verifyEmail', '/user/verify-email', userController.verifyEmail);
 
 /**
  * @swagger

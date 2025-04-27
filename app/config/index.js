@@ -1,13 +1,13 @@
 module.exports = {
 	app: {
 		port: process.env.PORT || 1703,
-		appName: process.env.APP_NAME || 'DotlyAdmin',
+		appName: process.env.APP_NAME || 'Super Admin',
 		env: process.env.NODE_ENV || 'development',
 		isProd: (process.env.NODE_ENV === 'prod'),
 		getAdminFolderName: process.env.ADMIN_FOLDER_NAME || 'admin',
 		getApiFolderName: process.env.API_FOLDER_NAME || 'api',
-		project_name: 'Dotly Admin',
-		project_description: 'Dotly Admin Setup'
+		project_name: 'Super Admin',
+		project_description: 'Super Admin Setup'
 	},
 	db: {
 		port: process.env.DB_PORT ,

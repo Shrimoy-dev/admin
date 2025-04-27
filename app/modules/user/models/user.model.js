@@ -13,6 +13,7 @@ const UserSchema = new Schema({
   first_name: { type: String, default: '', index: true },
   last_name: { type: String, default: '', index: true },
   fullName: { type: String, default: '', index: true },
+  userName: { type: String, default: '', index: true },
   bio: { type: String, default: '' },
   profile_image: { type: String, default: '' },
 

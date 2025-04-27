@@ -6,7 +6,7 @@
     "scripts": {
         "test": "jest --force-exit --watchAll --verbose ./tests",
         "test:watch": "jest --watch --detectOpenHandles",
-        "start": "node admin.js",
+        "start": "nodemon admin.js",
         "test:cov": "jest --coverage --force-exit --detectOpenHandles",
         "coverage": "jest --coverage --force-exit --detectOpenHandles",
         "zzz": "npx nodemon admin.js",
@@ -21,10 +21,10 @@
         "darwin",
         "linux",
         "win32"
-    ],
+    ], 
     "author": "",
     "license": "ISC",
-    "dependenodencies": {
+    "dependencies": {
         "@mongoosejs/double": "^0.3.0",
         "@sendgrid/mail": "^7.7.0",
         "apn": "^2.2.0",
@@ -130,8 +130,8 @@
         ]
     },
     "devDependencies": {
-        "apidoc": "^0.52.0",
-        "forever": "^4.0.3",
-        "npx": "^10.2.2"
+        "apidoc": "^0.29.0",
+        "forever": "^1.0.1",
+        "npx": "^3.0.0"
     }
 }
