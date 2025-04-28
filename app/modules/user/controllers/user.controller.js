@@ -260,6 +260,27 @@ class UserController {
             return requestHandler.sendError(req, res, error);
         }
     }
+    /* @Method: dashboardData
+    // @Description: Get dashboard data
+    */
+   async dashboardData(req, res) {
+        try {
+            let userDetails = await userRepo.getUserDetails({ _id: req.user._id });
+            if (!userDetails || userDetails.length == 0) {
+                requestHandler.throwError(400, 'Bad Request', 'User not found!')();
+            } else {
+                let userDashboardData = await userRepo.getUserDashboardData({ _id: req.user._id });
+                if (!_.isNull(userDashboardData)) {
+                    requestHandler.sendSuccess(res, "Dashboard data fetched successfully.")(userDashboardData[0]);
+                } else {
+                    requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                }
+               
+            }
+        } catch (error) {
+            return requestHandler.sendError(req, res, error);
+        }
+    }
 };
 
 module.exports = new UserController();

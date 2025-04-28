@@ -27,6 +27,10 @@ const optionsAdmin = {
 				name: "User",
 				description: "User APIs"
 			},
+			{
+				name: "Package",
+				description: "Package APIs"
+			},
 		],
 		schemes: ['https', 'http'],
 		host: `localhost:3001/`,

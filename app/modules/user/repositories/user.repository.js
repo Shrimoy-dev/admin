@@ -264,7 +264,21 @@ const userRepository = {
             return e;
         }
     },
-
+    getUserDashboardData: async (id) => {
+        try {
+           let conditions = { userId: mongoose.Types.ObjectId(id), isDeleted: false };
+            let aggregate = await User.aggregate([
+                {
+                    $match: conditions
+                }
+            ]) ;
+            if (!aggregate) return null;
+            return aggregate;
+        } catch (error) {
+            throw error;
+            
+        }
+    },
     getById: async (id) => {
         try {
             let user = await User.findById(id).populate('role').exec();

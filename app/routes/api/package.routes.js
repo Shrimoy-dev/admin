@@ -26,8 +26,59 @@ const uploadFile = multer({
     storage: Storage
 });
 const request_param = multer();
+/**
+ * @swagger
+ * /package/list:
+ *   get:
+ *     summary: List All Packages
+ *     tags:
+ *       - Package
+ *     produces:
+ *       - application/json
+ *     responses:
+ *        200:
+ *          description: Success
+ *        400:
+ *         description: Bad Request
+ */
 namedRouter.get('api.package.list', '/package/list', request_param.any(), packageController.getAll);
 namedRouter.all('/package*', auth.authenticateAPI);
+/**
+ * @swagger
+ * /package/admin-save:
+ *   post:
+ *     summary: Save Package by admin
+ *     tags:
+ *       - Package
+ *     security:
+ *       - Token: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - amount
+ *               - intervalInMonths
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               amount:
+ *                 type: number
+ *               intervalInMonths:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Success
+ *       400:
+ *         description: Bad Request
+ */
+
 namedRouter.post('api.package.save', '/package/admin-save', request_param.any(), packageController.save);
 namedRouter.post('api.package.adminList', '/package/admin-list', request_param.any(), packageController.getAllForAdmin);
 namedRouter.post('api.package.adminDelete', '/package/admin-delete', request_param.any(), packageController.delete);

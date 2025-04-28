@@ -202,6 +202,8 @@ namedRouter.post('api.user.deviceToken', '/user/device-token', userController.de
 // User Account Delete route
 namedRouter.get('api.user.delete', '/user/delete', userController.delete);
 
+namedRouter.get('api.user.dashboard', '/user/dashboard-data', userController.dashboardData);
+
 /**
   * @swagger
   * /user/logout:
