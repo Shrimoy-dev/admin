@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
 const bools = [true, false];
 
 
@@ -11,6 +12,7 @@ const UserPackageSchema = new Schema({
    status:{ type: String, default: 'Active' , enum: ["Active", "Inactive"], index: true },
    isDeleted: { type: Boolean, default: false, enum: bools, index: true }
 }, { timestamps: true, versionKey: false });
-
+// For pagination
+UserPackageSchema.plugin(mongooseAggregatePaginate);
 // create the model for user devices and expose it to our app
 module.exports = mongoose.model('user_package', UserPackageSchema);

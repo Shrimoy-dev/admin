@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
 const User = require('user/models/user.model');
 const userRepo = require('../../user/repositories/user.repository');
 const roleRepo = require('../../roles/repositories/role.repository');
+const packageRepo = require('../../package/repositories/package.repository');
+const userPackageRepo = require('../../userPackage/repositories/userPackage.repository');
 const userDevicesRepo = require('user_devices/repositories/user_devices.repository');
 
 class UserController {
@@ -47,9 +49,20 @@ class UserController {
                     }
                     let otp =utils.betweenRandomNumber(100000, 999999);
                     req.body.otp = otp;
+                    req.body.fullName = req.body.first_name + ' ' + req.body.last_name;
                     const saveUser = await userRepo.save(req.body);
                     if (saveUser && saveUser._id) {
-                       
+                        if (req.body.packageId) {
+                            let packageData = await packageRepo.getById( req.body.packageId);
+                            let packageParams = {
+                                userId: saveUser._id,
+                                packageId: req.body.packageId,
+                                currentPeriodStart: new Date(),
+                                currentPeriodEnd: moment().add(packageData.intervalInMonths, 'months').format('YYYY-MM-DD'),
+                                status: 'Active'
+                            }
+                            await userPackageRepo.save(packageParams);
+                        }
                         let emailData = { name: saveUser.fullName, email: saveUser.email, otp: otp };
                         await mailHelper.sendMail(`${project_name} Admin<${process.env.FROM_EMAIL}>`, saveUser.email, `Verify OTP || ${project_name}`, 'user-otp-verify', emailData);
                         // let userDetails = await userRepo.getUserDetails({ _id: saveUser._id });
@@ -127,7 +140,6 @@ class UserController {
     try {
         let findUser = await userRepo.getByField({ otp: req.body.otp, isDeleted: false });
         if (findUser) {
-            if (findUser && findUser.otpExpireTime) {
 
                 await userRepo.updateById({
                     isOtpVerified: true,
@@ -135,10 +147,8 @@ class UserController {
                     otpExpireTime: null
                 }, findUser._id);
                 requestHandler.sendSuccess(res, 'Email verified successfully! Please login to continue')();
-            } else {
-                requestHandler.throwError(400, 'Bad Request', 'OTP expired!')();
-            }
-        } else {
+            } 
+             else {
             requestHandler.throwError(400, 'Bad Request', 'Invalid OTP!')();
         }
     } catch (error) {
@@ -233,6 +243,23 @@ class UserController {
             });
         }
     };
+
+     /* @Method: delete
+    // @Description: user delete
+    */
+   async getProfile(req, res) {
+        try {
+            let userDetails = await userRepo.getUserDetails( req.user._id);
+            if (!userDetails || userDetails.length == 0) {
+                requestHandler.throwError(400, 'Bad Request', 'User not found!')();
+            } else {
+                requestHandler.sendSuccess(res, "Profile details fetched successfully.")(userDetails[0]);
+            }
+            requestHandler.sendSuccess(res, "Profile details fetched successfully.")(userDetails[0]);
+        } catch (error) {
+            return requestHandler.sendError(req, res, error);
+        }
+    }
 };
 
 module.exports = new UserController();

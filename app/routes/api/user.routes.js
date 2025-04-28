@@ -51,6 +51,9 @@ const request_param = multer();
  *             required:
  *                 - email
  *                 - password
+ *                 - first_name
+ *                 - last_name
+ *                 - fullName
  *             properties:
  *                 email:
  *                     type: string 
@@ -64,7 +67,7 @@ const request_param = multer();
  *                     type: string
  *                 phone:
  *                     type: string
- *                 bio:
+ *                 packageId:
  *                     type: string
  *     responses:
  *        200:
@@ -140,7 +143,7 @@ namedRouter.all('/user*', auth.authenticateAPI);
  *          description: Bad Request
  */
 // User Profile Details route
-namedRouter.get('api.user.profile', '/user/profile', userController.profile);
+namedRouter.get('api.user.profile', '/user/profile', userController.getProfile);
 
 /**
  * @swagger

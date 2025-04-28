@@ -28,7 +28,7 @@ const uploadFile = multer({
 const request_param = multer();
 namedRouter.get('api.package.list', '/package/list', request_param.any(), packageController.getAll);
 namedRouter.all('/package*', auth.authenticateAPI);
-namedRouter.post('api.package.save', '/package/save', request_param.any(), packageController.save);
+namedRouter.post('api.package.save', '/package/admin-save', request_param.any(), packageController.save);
 namedRouter.post('api.package.adminList', '/package/admin-list', request_param.any(), packageController.getAllForAdmin);
 namedRouter.post('api.package.adminDelete', '/package/admin-delete', request_param.any(), packageController.delete);
 
