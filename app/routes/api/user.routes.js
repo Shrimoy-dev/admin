@@ -122,6 +122,72 @@ namedRouter.post('api.user.verifyEmail', '/user/verify-email', userController.ve
 //User signin Route
 namedRouter.post('api.user.signin', '/user/signin', request_param.any(), userController.signin);
 
+/**
+ * @swagger
+ * /user/forgot-password:
+ *   post:
+ *     summary: Forgot Password
+ *     tags:
+ *       - User
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *         - name: body
+ *           in: body
+ *           description: User Account forgot password
+ *           required: true
+ *           schema:
+ *             type: object
+ *             required:
+ *                 - email
+ *             properties:
+ *                 email:
+ *                     type: string
+ *                 
+ *     responses:
+ *        200:
+ *          description: Reset link sent!
+ *        403:
+ *          description: No account found!
+ *        400:
+ *          description: Bad Request
+ *        500:
+ *          description: Server Error
+ */
+namedRouter.post('api.user.forgotPassword', '/user/forgot-password', userController.forgotPassword);
+
+/**
+ * @swagger
+ * /user/reset-password:
+ *   post:
+ *     summary: Reset Password
+ *     tags:
+ *       - User
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *         - name: body
+ *           in: body
+ *           description: User Account reset password
+ *           required: true
+ *           schema:
+ *             type: object
+ *             required:
+ *                 - password
+ *             properties:
+ *                 password:
+ *                     type: string               
+ *     responses:
+ *        200:
+ *          description: Reset success!
+ *        403:
+ *          description: No account found!
+ *        400:
+ *          description: Bad Request
+ *        500:
+ *          description: Server Error
+ */
+namedRouter.post('api.user.resetPassword', '/user/reset-password', request_param.any(), userController.resetPassword);
 
 namedRouter.all('/user*', auth.authenticateAPI);
 
@@ -225,6 +291,7 @@ namedRouter.get('api.user.dashboard', '/user/dashboard-data', userController.das
 */
 // User Account Logout route
 namedRouter.get('api.user.logout', '/user/logout', userController.logout);
+
 
 
 module.exports = router;

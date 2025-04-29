@@ -22,7 +22,7 @@ class PackageController {
             if (!req.body?.description?.trim()) {
                 return  requestHandler.throwError(400, 'Bad Request', 'Package description is required.')();
               }
-              if (!req.body?.amount?.trim()) {
+              if (!req.body?.amount) {
                 return  requestHandler.throwError(400, 'Bad Request', 'Package amount is required.')();
               }
              if (req.user.role.role  === 'admin') {

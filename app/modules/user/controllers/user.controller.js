@@ -255,7 +255,6 @@ class UserController {
             } else {
                 requestHandler.sendSuccess(res, "Profile details fetched successfully.")(userDetails[0]);
             }
-            requestHandler.sendSuccess(res, "Profile details fetched successfully.")(userDetails[0]);
         } catch (error) {
             return requestHandler.sendError(req, res, error);
         }
@@ -265,11 +264,11 @@ class UserController {
     */
    async dashboardData(req, res) {
         try {
-            let userDetails = await userRepo.getUserDetails({ _id: req.user._id });
+            let userDetails = await userRepo.getById(req.user._id);
             if (!userDetails || userDetails.length == 0) {
                 requestHandler.throwError(400, 'Bad Request', 'User not found!')();
             } else {
-                let userDashboardData = await userRepo.getUserDashboardData({ _id: req.user._id });
+                let userDashboardData = await userRepo.getUserDashboardData( req.user._id );
                 if (!_.isNull(userDashboardData)) {
                     requestHandler.sendSuccess(res, "Dashboard data fetched successfully.")(userDashboardData[0]);
                 } else {
@@ -281,6 +280,96 @@ class UserController {
             return requestHandler.sendError(req, res, error);
         }
     }
+
+    /* @Method: forgetPassword
+    // @Description: User forgot password
+    */
+
+        async forgotPassword(req, res) {
+                try {
+                    if (!req.body?.email?.trim()) {
+                       return requestHandler.throwError(400, 'Bad Request', 'Email is required.')();
+                    } 
+                    req.body.email = req.body.email.trim().toLowerCase().toString();
+                    let roleDetails = await roleRepo.getByField({ role: "user" });
+                    let user = await User.findOne({ email: { $regex: '^' + req.body.email + '$', $options: 'i' }, role: { $in: [roleDetails._id] } }).exec();
+                    
+                    if (!user) {
+                        requestHandler.throwError(403, 'Bad Request', 'Oops! No user found. Kindly contact support.')();
+                    } else {
+            
+                            // Encrypt email
+                            const encryptedEmail = encryptEmail(user.email);
+                        
+                            // Build reset link
+                            const resetLink = `${process.env.FRONT_END_URL}/user/reset-password
+    ?q=${encodeURIComponent(encryptedEmail)}`;
+            
+                            let emailData = { 
+                                name: user.email,
+                                resetLink: resetLink // <-- send the reset link!
+                            };
+            
+                            let sendMail = await mailHelper.sendMail(
+                                `${project_name} Admin<${process.env.FROM_EMAIL}>`, 
+                                user.email, 
+                                `Forgot Password || ${project_name}`, 
+                                'admin-forgot-pass', 
+                                emailData
+                            );
+            
+                            if (sendMail) {
+                                requestHandler.sendSuccess(res, "Reset link sent via email.")();
+                            } else {
+                                requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                            }
+                        
+                    }
+                } catch (e) {
+                    console.log(e);
+                    
+                    return requestHandler.sendError(req, res, e);
+                }
+            }
+
+             async  resetPassword(req, res) {
+                        try {
+                            if (!req.body?.token?.trim()) {
+                                return requestHandler.throwError(400, 'Bad Request', 'Encrypted token is required.')();
+                            }
+                            if (!req.body?.newPassword?.trim()) {
+                                return requestHandler.throwError(400, 'Bad Request', 'New password is required.')();
+                            }
+                            const encryptedEmail = req.body.token.trim();
+                            // Decrypt the email
+                            const userEmail = decryptEmail(encryptedEmail);
+                    
+                            // Find the user by decrypted email
+                            let roleDetails = await roleRepo.getByField({ role: "admin" });
+                            let user = await User.findOne({ email: userEmail, role: { $in: [roleDetails._id] } }).exec();
+                    
+                            if (!user) {
+                                return requestHandler.throwError(403, 'Bad Request', 'User not found or invalid email.')();
+                            }
+                    
+                            // Generate a new random password
+                            // let random_pass = utils.betweenRandomNumber(10000000, 99999999);
+                            // let readable_pass = random_pass.toString();
+                            // random_pass = new User().generateHash(random_pass.toString());
+                            let userPass = new User().generateHash(req.body.newPassword);
+                            // Update user password in the database
+                            let updatedUser = await User.findByIdAndUpdate(user._id, { password: userPass }).exec();
+                    
+                            if (!updatedUser) {
+                                return requestHandler.throwError(400, 'Bad Request', 'Unable to reset password at this time.')();
+                            } else {
+                               return requestHandler.sendSuccess(res, "Password reset successfully. Please signin to continue")(); 
+                            }
+                        } catch (e) {
+                            console.log('eeeeeeeeeeeeeeeeeeeeee', e);
+                            return requestHandler.sendError(req, res, e);
+                        }
+                    }
 };
 
 module.exports = new UserController();

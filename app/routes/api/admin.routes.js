@@ -39,4 +39,39 @@ namedRouter.post('api.admin.userList', '/admin/user-list', uploadFile.any(), adm
 
 namedRouter.get('api.admin.userDetails', '/admin/user-details', request_param.any(), adminController.getUserDetails);
 
+/**
+ * @swagger
+ * /admin/delete-user:
+ *   post:
+ *     summary: Delete User Account
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - Token: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *         - name: body
+ *           in: body
+ *           description: User Account Delete
+ *           required: true
+ *           schema:
+ *             type: object
+ *             required:
+ *                 - id
+ *             properties:
+ *                 id:
+ *                     type: string               
+ *     responses:
+ *        200:
+ *          description: Reset success!
+ *        403:
+ *          description: No account found!
+ *        400:
+ *          description: Bad Request
+ *        500:
+ *          description: Server Error
+ */
+namedRouter.post('api.admin.user.delete', '/admin/delete-user', request_param.any(), adminController.deleteUser);
+
 module.exports = router;

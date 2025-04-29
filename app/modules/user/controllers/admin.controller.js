@@ -188,6 +188,26 @@ class AdminController {
                 return requestHandler.sendError(req, res, error);
             }
         }
+
+        async deleteUser (req, res) {
+            try {
+                if (!req.body?.id?.trim()) {
+                    return requestHandler.throwError(400, 'Bad Request', 'User id is required.')();
+                }
+                if (req.user.role.role !== 'admin') {
+                    return requestHandler.throwError(403, 'Forbidden', 'You are not authorized to access this resource.')();
+                }
+                let user = await userRepo.updateById(req.body.id, { isDeleted: true });
+                if (_.isNull(user)) {
+                    return requestHandler.throwError(404, 'Not Found', 'No users found.')();
+                } else {
+                  return  requestHandler.sendSuccess(res, "User deleted successfully.")(user);
+                }
+               
+            } catch (error) {
+                return requestHandler.sendError(req, res, error);
+            }
+        }
 }
 
 module.exports = new AdminController();

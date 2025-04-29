@@ -256,7 +256,7 @@ const userRepository = {
                     }
                 },
             ]);
-            console.log('aggregate', aggregate);
+           
             
             if (!aggregate) return null;
             return aggregate;
