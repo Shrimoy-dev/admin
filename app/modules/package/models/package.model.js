@@ -9,6 +9,7 @@ const PackageSchema = new Schema({
    title: { type: String, default: '' },
    description: { type: String, default: null },
    amount: { type: Number, default: 0 },
+   roi: { type: Number, default: 0 },
    intervalInMonths: { type: Number, default: 0 },
    status:{ type: String, default: 'Active' , enum: ["Active", "Inactive"], index: true },
    isDeleted: { type: Boolean, default: false, enum: bools, index: true }

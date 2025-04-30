@@ -1,3 +1,4 @@
+const { duration } = require('moment');
 const BaseRepository = require('../../../config/baseRepository');
 const Package = require('../models/package.model'); // Adjust the path as necessary
 
@@ -70,8 +71,10 @@ class PackageRepository extends BaseRepository {
                     $project: {
                         title: 1,
                         isDeleted: 1,
+                        intervalInMonths: 1,
                         usersInPackage:'$user_packages',
                         amount: 1,
+                        roi:1,
                         status: 1,
                         createdAt: 1,
                     }

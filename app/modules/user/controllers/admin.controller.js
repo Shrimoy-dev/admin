@@ -197,7 +197,7 @@ class AdminController {
                 if (req.user.role.role !== 'admin') {
                     return requestHandler.throwError(403, 'Forbidden', 'You are not authorized to access this resource.')();
                 }
-                let user = await userRepo.updateById(req.body.id, { isDeleted: true });
+                let user = await userRepo.updateById( { isDeleted: true }, req.body.id,);
                 if (_.isNull(user)) {
                     return requestHandler.throwError(404, 'Not Found', 'No users found.')();
                 } else {

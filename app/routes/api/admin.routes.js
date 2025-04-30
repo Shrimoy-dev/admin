@@ -41,7 +41,7 @@ namedRouter.get('api.admin.userDetails', '/admin/user-details', request_param.an
 
 /**
  * @swagger
- * /admin/delete-user:
+ * :
  *   post:
  *     summary: Delete User Account
  *     tags:
