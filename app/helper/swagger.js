@@ -10,44 +10,56 @@ const path = require('path');
 /* This is for Admin end swiagger API doc */
 const optionsAdmin = {
 	swaggerDefinition: {
+		openapi: '3.0.0',
 		info: {
-			title: 'Node',
-			version: '1.0.0',
-			description: 'Node' + ' API Documentation',
-			contact: {
-				email: '',
-			},
+		  title: 'Node',
+		  version: '1.0.0',
+		  description: 'Node API Documentation',
+		  contact: {
+			email: '',
+		  },
 		},
 		tags: [
-			{
-				name: "Auth",
-				description: "Authentication APIs"
-			},
-			{
-				name: "User",
-				description: "User APIs"
-			},
-			{
-				name: "Package",
-				description: "Package APIs"
-			},
-			{
-				name: "Admin",
-				description: "Admin APIs"
-			},
+		  {
+			name: "Auth",
+			description: "Authentication APIs"
+		  },
+		  {
+			name: "User",
+			description: "User APIs"
+		  },
+		  {
+			name: "Package",
+			description: "Package APIs"
+		  },
+		  {
+			name: "Admin",
+			description: "Admin APIs"
+		  },
 		],
-		schemes: ['https', 'http'],
-		host: `localhost:3001/`,
-		basePath: '/api',
-		securityDefinitions: {
+		servers: [
+		  {
+			url: 'http://localhost:3001/api',
+			description: 'Local server'
+		  }
+		],
+		components: {
+		  securitySchemes: {
 			Token: {
-				type: 'apiKey',
-				description: 'JWT authorization of an API',
-				name: 'x-access-token',
-				in: 'header',
-			},
+			  type: 'apiKey',
+			  in: 'header',
+			  name: 'x-access-token',
+			  description: 'JWT authorization of an API'
+			}
+		  }
 		},
-	},
+		security: [
+		  {
+			Token: []
+		  }
+		]
+	  }
+	  ,
 
 	apis: [path.join(__dirname, `../routes/api/*.js`)],
 };

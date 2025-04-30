@@ -49,7 +49,7 @@ class UserController {
                     }
                     let otp =utils.betweenRandomNumber(100000, 999999);
                     req.body.otp = otp;
-                    req.body.fullName = req.body.first_name + ' ' + req.body.last_name;
+                    // req.body.fullName = req.body.first_name + ' ' + req.body.last_name;
                     const saveUser = await userRepo.save(req.body);
                     if (saveUser && saveUser._id) {
                         if (req.body.packageId) {

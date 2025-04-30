@@ -47,7 +47,7 @@ namedRouter.all('/admin*', auth.authenticateAPI);
 /**
  * @swagger
  * /admin/terms-update:
- *   get:
+ *   post:
  *     summary: Update Terms and Conditions Data
  *     tags:
  *       - Admin
