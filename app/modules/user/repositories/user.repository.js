@@ -463,7 +463,9 @@ const userRepository = {
                 {
                     $lookup: {
                         "from": "user_packages",
-                        let: { userId: id },
+                        let: { userId: id,
+                            publishDay: "$settings.publishDay",
+                         },
                         pipeline: [
                             {
                                 $match: {
@@ -562,7 +564,7 @@ const userRepository = {
                                                         {
                                                           $and: [
                                                             { $eq: ["$$monthItem.month", currentMonth] },
-                                                            { $gte: [currentDay, "$settings.publishDay"] }
+                                                            { $gte: [currentDay, "$$publishDay"] }
                                                           ]
                                                         }
                                                       ]
