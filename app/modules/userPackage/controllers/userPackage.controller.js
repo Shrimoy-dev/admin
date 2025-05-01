@@ -36,7 +36,7 @@ async save (req, res) {
                 req.body.userId = req.user._id;
                 let saveRecord = await userPackageRepo.save(req.body);
                 if (saveRecord && saveRecord._id) {
-                    requestHandler.sendSuccess(res, "User saveData saved successfully.")(saveRecord);
+                    requestHandler.sendSuccess(res, "Package saved successfully.")(saveRecord);
                 } else {
                     requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
                 }
@@ -50,6 +50,37 @@ async save (req, res) {
         return requestHandler.sendError(req, res, error);
     }
 };
+
+async update (req, res) {
+    try {
+        if (!req.body?.packageId) {
+            return requestHandler.throwError(400, 'Bad Request', 'Package ID is required.')();
+        }
+   
+        let packageData = await packageRepo.getById(req.body.packageId);
+        if (_.isNull(packageData) && _.isEmpty(packageData)) {
+
+            return requestHandler.throwError(400, 'Bad Request', 'Package not found.')();
+        } else {
+            if (req.body?.investment < packageData?.minAmount) {
+                return requestHandler.throwError(400, 'Bad Request', `Investment amount should be greater than ${packageData?.minAmount}`)();
+            } else if (req.body?.investment > packageData?.maxAmount) {
+                return requestHandler.throwError(400, 'Bad Request', `Investment amount should be less than ${packageData?.maxAmount}`)();
+            } else {
+                req.body.userId = req.user._id;
+                let saveRecord = await userPackageRepo.update(req.body);
+                if (saveRecord && saveRecord._id) {
+                    requestHandler.sendSuccess(res, "User saveData updated successfully.")(saveRecord);
+                } else {
+                    requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                }
+            }
+        }
+
+    } catch (error) {
+        return requestHandler.sendError(req, res, error);
+    }
+}
 }
 
 module.exports = new UserPackageController();
