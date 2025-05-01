@@ -267,7 +267,23 @@ namedRouter.post('api.user.deviceToken', '/user/device-token', userController.de
  */
 // User Account Delete route
 namedRouter.get('api.user.delete', '/user/delete', userController.delete);
-
+/**
+ * @swagger
+ * /user/dashboard-data:
+ *   get:
+ *     summary: User Dashboard Data
+ *     tags:
+ *       - User
+ *     security:
+ *       - Token: []
+ *     produces:
+ *       - application/json
+ *     responses:
+ *        200:
+ *          description: Data fetched Successfully
+ *        400:
+ *          description: Bad Request
+ */
 namedRouter.get('api.user.dashboard', '/user/dashboard-data', userController.dashboardData);
 
 /**
