@@ -22,8 +22,14 @@ class PackageController {
             if (!req.body?.description?.trim()) {
                 return  requestHandler.throwError(400, 'Bad Request', 'Package description is required.')();
               }
-              if (!req.body?.amount) {
-                return  requestHandler.throwError(400, 'Bad Request', 'Package amount is required.')();
+              if (!req.body?.minAmount) {
+                return  requestHandler.throwError(400, 'Bad Request', 'Package minimum amount is required.')();
+              }
+              if (!req.body?.maxAmount) {
+                return  requestHandler.throwError(400, 'Bad Request', 'Package maximum amount is required.')();
+              }
+              if (!req.body?.roi) {
+                return  requestHandler.throwError(400, 'Bad Request', 'Package ROI is required.')();
               }
              if (req.user.role.role  === 'admin') {
               let saveRecord = await packageRepo.save(req.body);
@@ -36,6 +42,47 @@ class PackageController {
                 requestHandler.throwError(403, 'Forbidden', 'You are not authorized to perform this action!')();
              }
                        
+        } catch (error) {
+            return requestHandler.sendError(req, res, error);
+        }
+    }
+
+    async update (req, res) {
+        try {
+            if (!req.body?.id?.trim()) {
+                return requestHandler.throwError(400, 'Bad Request', 'Package id is required.')();
+            }
+            if (!req.body?.title?.trim()) {
+                return requestHandler.throwError(400, 'Bad Request', 'Package title is required.')();
+            }
+            if (!req.body?.description?.trim()) {
+                return  requestHandler.throwError(400, 'Bad Request', 'Package description is required.')();
+              }
+              if (!req.body?.minAmount) {
+                return  requestHandler.throwError(400, 'Bad Request', 'Package minimum amount is required.')();
+              }
+              if (!req.body?.maxAmount) {
+                return  requestHandler.throwError(400, 'Bad Request', 'Package maximum amount is required.')();
+              }
+              if (!req.body?.roi) {
+                return  requestHandler.throwError(400, 'Bad Request', 'Package ROI is required.')();
+              }
+            if (req.user.role.role  === 'admin') {
+                let packageId = req.body.id;
+                let packageData = await packageRepo.getByField({ _id: packageId, isDeleted: false });
+                if (!_.isNull(packageData)) {
+                    let updateRecord = await packageRepo.updateById(req.body, packageId);
+                    if (updateRecord) {
+                        requestHandler.sendSuccess(res, "Package updated successfully.")(updateRecord);
+                    } else {
+                        requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                    }
+                } else {
+                    requestHandler.throwError(400, 'Bad Request', 'No packages found!')();
+                }
+            } else {
+                requestHandler.throwError(403, 'Forbidden', 'You are not authorized to perform this action!')();
+            }
         } catch (error) {
             return requestHandler.sendError(req, res, error);
         }
@@ -75,7 +122,7 @@ class PackageController {
 
     async delete(req, res) {
         try {
-            console.log(req.param, "params id");
+       
             
             if ( !req.body?.id?.trim()) {
                 return requestHandler.throwError(400, 'Bad Request', 'Package id is required.')();
@@ -98,6 +145,39 @@ class PackageController {
             }
         } catch (error) {
             return requestHandler.sendError(req, res, error);
+        }
+    }
+
+    async changeStatus(req, res) {
+        try {
+            if (!req.body?.id?.trim()) {
+                return requestHandler.throwError(400, 'Bad Request', 'Package id is required.')();
+            }
+            if (req.user.role.role  === 'admin') {
+                let packageId = req.body.id;
+                let packageData = await packageRepo.getById( packageId);
+                if (!_.isNull(packageData)) {
+                    let status
+                    if (packageData.status === 'Active') {
+                        status = 'Inactive';
+                    } else {
+                        status = 'Active';
+                    }
+                    let updateRecord = await packageRepo.updateById({ status: status }, packageId);
+                    if (updateRecord) {
+                        requestHandler.sendSuccess(res, "Package status updated successfully.")(updateRecord);
+                    } else {
+                        requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                    }
+                } else {
+                    requestHandler.throwError(400, 'Bad Request', 'No packages found!')();
+                }
+            } else {
+                requestHandler.throwError(403, 'Forbidden', 'You are not authorized to perform this action!')();
+            }
+        } catch (error) {
+            return requestHandler.sendError(req, res, error);
+            
         }
     }
 }

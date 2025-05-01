@@ -8,7 +8,8 @@ const bools = [true, false];
 const PackageSchema = new Schema({
    title: { type: String, default: '' },
    description: { type: String, default: null },
-   amount: { type: Number, default: 0 },
+   minAmount: { type: Number, default: 0 },
+   maxAmount: { type: Number, default: 0 },
    roi: { type: Number, default: 0 },
    intervalInMonths: { type: Number, default: 0 },
    status:{ type: String, default: 'Active' , enum: ["Active", "Inactive"], index: true },
