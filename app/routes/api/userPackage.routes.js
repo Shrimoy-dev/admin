@@ -56,5 +56,5 @@ namedRouter.all('/user-package*', auth.authenticateAPI);
  *         description: Bad Request
  * 
  */
-namedRouter.get('api.userPackage.save', '/user-package/save', request_param.any(), userPackageController.save);
+namedRouter.post('api.userPackage.save', '/user-package/save', request_param.any(), userPackageController.save);
 module.exports = router

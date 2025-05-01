@@ -15,9 +15,7 @@ constructor () {}
 /*Method to save user saveData*/
 async save (req, res) {
     try {
-        if (!req.body?.userId) {
-            return requestHandler.throwError(400, 'Bad Request', 'User ID is required.')();
-        }
+     
         if (!req.body?.packageId) {
             return requestHandler.throwError(400, 'Bad Request', 'Package ID is required.')();
         }
@@ -35,6 +33,7 @@ async save (req, res) {
             } else if (req.body?.investment > packageData?.maxAmount) {
                 return requestHandler.throwError(400, 'Bad Request', `Investment amount should be less than ${packageData?.maxAmount}`)();
             } else {
+                req.body.userId = req.user._id;
                 let saveRecord = await userPackageRepo.save(req.body);
                 if (saveRecord && saveRecord._id) {
                     requestHandler.sendSuccess(res, "User saveData saved successfully.")(saveRecord);
