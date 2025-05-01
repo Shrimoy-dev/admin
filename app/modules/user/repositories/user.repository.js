@@ -219,8 +219,10 @@ const userRepository = {
                                                 _id: "$_id",
                                                 title: "$title",
                                                 description: "$description",
-                                                amount: "$amount",
-                                                status: "$status"
+                                                minAmount: "$minAmount",
+                                                maxAmount: "$maxAmount",
+                                                status: "$status",
+
                                             }
                                         }
                                     ],
@@ -233,12 +235,14 @@ const userRepository = {
                             }},
                             {
                                 $project: {
-                                    _id: "$_id",
-                                    currentPeriodStart: "$currentPeriodStart",
-                                    currentPeriodEnd:'$currentPeriodEnd',
-                                    package: "$package",
+                                    _id: 1,
+                                    currentPeriodStart: 1,
+                                    investment: 1,
+                                    package: 1,
+                                  
                                 }
                             }
+                            
                         ],
                         "as": "user_packages"
                     }
@@ -262,6 +266,166 @@ const userRepository = {
             return aggregate;
         } catch (e) {
             return e;
+        }
+    },
+    getUserPackageDetails: async (id) => {
+        try {
+            let userId = mongoose.Types.ObjectId(id)
+            let aggregate = await User.aggregate([
+                { $match: { _id: userId, isDeleted: false } },
+                
+                {
+                    $lookup: {
+                        "from": "roles",
+                        let: { role: "$role" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$_id", "$$role"] }
+                                        ]
+                                    }
+                                }
+                            },
+
+                            {
+                                $project: {
+                                    _id: "$_id",
+                                    role: "$role",
+                                    roleDisplayName: "$roleDisplayName"
+                                }
+                            }
+                        ],
+                        "as": "role"
+                    }
+                },
+                { "$unwind": "$role" },
+                //lookup to get user package details
+                {
+                    $lookup: {
+                        "from": "user_packages",
+                        let: { userId:userId },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$userId", "$$userId"] },
+                                            { $eq: ["$isDeleted", false] },
+                                        ]
+                                    }
+                                }
+                            },
+                            //lookup to get package details
+                            {
+                                $lookup: {
+                                    "from": "packages",
+                                    let: { packageId: "$packageId" },
+                                    pipeline: [
+                                        {
+                                            $match: {
+                                                $expr: {
+                                                    $and: [
+                                                        { $eq: ["$_id", "$$packageId"] },
+                                                        { $eq: ["$isDeleted", false] }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            $project: {
+                                                _id: "$_id",
+                                                title: "$title",
+                                                description: "$description",
+                                                minAmount: "$minAmount",
+                                                maxAmount: "$maxAmount",
+                                                status: "$status",
+
+                                            }
+                                        }
+                                    ],
+                                    "as": "package"
+                                }
+                            },{
+                                $unwind: {
+                                    path: "$package",
+                                    preserveNullAndEmptyArrays: true
+                            }},
+                            {
+                                $project: {
+                                    _id: 1,
+                                    currentPeriodStart: 1,
+                                    investment: 1,
+                                    package: 1,
+                                    monthlyData: {
+                                        $map: {
+                                            input: [
+                                                { month: "jan", interestAmount: 0 },
+                                                { month: "feb", interestAmount: 0 },
+                                                { month: "mar", interestAmount: 0 },
+                                                { month: "apr", interestAmount: 0 },
+                                                { month: "may", interestAmount: 0 },
+                                                { month: "jun", interestAmount: 0 },
+                                                { month: "jul", interestAmount: 0 },
+                                                { month: "aug", interestAmount: 0 },
+                                                { month: "sep", interestAmount: 0 },
+                                                { month: "oct", interestAmount: 0 },
+                                                { month: "nov", interestAmount: 0 },
+                                                { month: "dec", interestAmount: 0 }
+                                            ],
+                                            as: "monthItem",
+                                            in: {
+                                                $let: {
+                                                    vars: {
+                                                        existing: {
+                                                            $first: {
+                                                                $filter: {
+                                                                    input: "$monthlyData",
+                                                                    as: "m",
+                                                                    cond: { $eq: ["$$m.month", "$$monthItem.month"] }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    in: {
+                                                        month: "$$monthItem.month",
+                                                        interestAmount: {
+                                                            $cond: {
+                                                                if: { $gt: [ "$$existing", null ] },
+                                                                then: "$$existing.interestAmount",
+                                                                else: 0
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        ],
+                        "as": "user_packages"
+                    }
+                },
+                {
+                    $project: {
+                       _id:1,
+                       user_packages:1,
+                       email:1,
+                       phone:1,
+                       userName:1,
+                    }
+                },
+            ]);
+           
+            
+            if (!aggregate) return null;
+            return aggregate;
+        } catch (error) {
+            throw error;
+            
         }
     },
     getUserDashboardData: async (id) => {

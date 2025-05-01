@@ -39,6 +39,8 @@ namedRouter.post('api.admin.userList', '/admin/user-list', uploadFile.any(), adm
 
 namedRouter.get('api.admin.userDetails', '/admin/user-details', request_param.any(), adminController.getUserDetails);
 
+namedRouter.get('api.admin.user.packageDetails', '/admin/user-package-details', request_param.any(), adminController.userPackageDetails);
+
 /**
  * @swagger
  * :
