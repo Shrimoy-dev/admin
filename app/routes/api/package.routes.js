@@ -79,9 +79,9 @@ namedRouter.all('/package*', auth.authenticateAPI);
  *         description: Bad Request
  */
 
-namedRouter.post('api.package.save', 'admin/package/save', request_param.any(), packageController.save);
-namedRouter.post('api.package.adminList', 'admin/package/list', request_param.any(), packageController.getAllForAdmin);
-namedRouter.post('api.package.adminDelete', 'admin/package/delete', request_param.any(), packageController.delete);
+namedRouter.post('api.package.save', '/admin/package/save', request_param.any(), packageController.save);
+namedRouter.post('api.package.adminList', '/admin/package/list', request_param.any(), packageController.getAllForAdmin);
+namedRouter.post('api.package.adminDelete', '/admin/package/delete', request_param.any(), packageController.delete);
 
 
 module.exports = router;
