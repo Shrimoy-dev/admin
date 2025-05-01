@@ -31,7 +31,7 @@ namedRouter.all('/user-package*', auth.authenticateAPI);
  * @swagger
  * /user-package/save:
  *   post:
- *     summary: Save User Package
+ *     summary: Save User Package (for user)
  *     tags:
  *       - User Package
  *     security:
@@ -57,4 +57,53 @@ namedRouter.all('/user-package*', auth.authenticateAPI);
  * 
  */
 namedRouter.post('api.userPackage.save', '/user-package/save', request_param.any(), userPackageController.save);
+
+/**
+ * @swagger
+ * /admin/user-package/update:
+ *   post:
+ *     summary: Update multiple user packages (for admin)
+ *     tags:
+ *       - User Package
+ *     security:
+ *       - Token: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_packages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: ID of the user package
+ *                     investment:
+ *                       type: number
+ *                     monthlyData:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           month:
+ *                             type: string
+ *                             example: jan
+ *                           interestAmount:
+ *                             type: number
+ *     responses:
+ *       200:
+ *         description: Packages updated successfully.
+ *       400:
+ *         description: Bad Request - Missing or invalid input.
+ *       403:
+ *         description: Forbidden - Not authorized.
+ *       500:
+ *         description: Internal Server Error.
+ */
+
+namedRouter.post('api.admin.userPackage.save', '/admin/user-package/update', request_param.any(), userPackageController.updatePackage);
 module.exports = router

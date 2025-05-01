@@ -51,36 +51,31 @@ async save (req, res) {
     }
 };
 
-async update (req, res) {
+async  updatePackage(req, res) {
     try {
-        if (!req.body?.packageId) {
-            return requestHandler.throwError(400, 'Bad Request', 'Package ID is required.')();
+        if (req.user.role.role !== 'admin') {
+            return requestHandler.throwError(403, 'Forbidden', 'You are not authorized to perform this action.')();
         }
-   
-        let packageData = await packageRepo.getById(req.body.packageId);
-        if (_.isNull(packageData) && _.isEmpty(packageData)) {
+        console.log(req.body);
+        
+        const userPackages = req.body?.user_packages;
+       
+        if (!Array.isArray(userPackages) || userPackages.length === 0) {
+            return requestHandler.throwError(400, 'Bad Request', 'User packages are required.')();
+        }
 
-            return requestHandler.throwError(400, 'Bad Request', 'Package not found.')();
-        } else {
-            if (req.body?.investment < packageData?.minAmount) {
-                return requestHandler.throwError(400, 'Bad Request', `Investment amount should be greater than ${packageData?.minAmount}`)();
-            } else if (req.body?.investment > packageData?.maxAmount) {
-                return requestHandler.throwError(400, 'Bad Request', `Investment amount should be less than ${packageData?.maxAmount}`)();
-            } else {
-                req.body.userId = req.user._id;
-                let saveRecord = await userPackageRepo.update(req.body);
-                if (saveRecord && saveRecord._id) {
-                    requestHandler.sendSuccess(res, "User saveData updated successfully.")(saveRecord);
-                } else {
-                    requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
-                }
-            }
-        }
+        await Promise.all(
+            userPackages.map(ele => userPackageRepo.updateById(ele, ele._id))
+        );
+
+        requestHandler.sendSuccess(res, "User packages updated successfully.")();
 
     } catch (error) {
         return requestHandler.sendError(req, res, error);
     }
 }
+
+
 }
 
 module.exports = new UserPackageController();

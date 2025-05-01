@@ -26,8 +26,9 @@ class AdminController {
                } else {
                    req.body.email = req.body.email.trim().toLowerCase();
                    const userRole = await roleRepo.getByField({ role: "admin" });
+              
                    const userExist = await userRepo.getByField({ email: req.body.email, role: userRole._id, isDeleted: false });
-                   console.log('userExist', userExist);
+              
                    
                    if (userExist && userExist.status == 'Active') {
                        if (!(new User().validPassword(req.body.password, userExist.password))) {
