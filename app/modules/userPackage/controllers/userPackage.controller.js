@@ -24,19 +24,26 @@ async save (req, res) {
         if (!req.body?.investment) {
             return requestHandler.throwError(400, 'Bad Request', 'Investment amount is required.')();
         }
-        let saveData = await packageRepo.getById(req.body.packageId);
-        if (req.body?.investment < saveData?.minAmount) {
-            return requestHandler.throwError(400, 'Bad Request', `Investment amount should be greater than ${saveData?.minAmount}`)();
-        } else if (req.body?.investment > saveData?.maxAmount) {
-            return requestHandler.throwError(400, 'Bad Request', `Investment amount should be less than ${saveData?.maxAmount}`)();
+        let packageData = await packageRepo.getById(req.body.packageId);
+        if (_.isNull(packageData) && _.isEmpty(packageData)) {
+
+            return requestHandler.throwError(400, 'Bad Request', 'Package not found.')();
         } else {
-            let saveRecord = await userPackageRepo.save(req.body);
-            if (saveRecord && saveRecord._id) {
-                requestHandler.sendSuccess(res, "User saveData saved successfully.")(saveRecord);
+          
+            if (req.body?.investment < packageData?.minAmount) {
+                return requestHandler.throwError(400, 'Bad Request', `Investment amount should be greater than ${packageData?.minAmount}`)();
+            } else if (req.body?.investment > packageData?.maxAmount) {
+                return requestHandler.throwError(400, 'Bad Request', `Investment amount should be less than ${packageData?.maxAmount}`)();
             } else {
-                requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                let saveRecord = await userPackageRepo.save(req.body);
+                if (saveRecord && saveRecord._id) {
+                    requestHandler.sendSuccess(res, "User saveData saved successfully.")(saveRecord);
+                } else {
+                    requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                }
             }
         }
+
    
        
    

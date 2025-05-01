@@ -71,6 +71,7 @@ class PackageRepository extends BaseRepository {
                     $project: {
                         title: 1,
                         isDeleted: 1,
+                        description:1,
                         intervalInMonths: 1,
                         usersInPackage:'$user_packages',
                         minAmount: 1,
