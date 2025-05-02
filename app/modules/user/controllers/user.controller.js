@@ -373,3 +373,52 @@ class UserController {
 };
 
 module.exports = new UserController();
+
+function encryptEmail(email) {
+    const algorithm = 'aes-256-cbc';
+    const secretKey = process.env.ENCRYPTION_SECRET_KEY; // must be 32 bytes
+    const iv = crypto.randomBytes(16); // Initialization vector
+
+    const cipher = crypto.createCipheriv(algorithm, Buffer.from(secretKey, 'utf8'), iv);
+    let encrypted = cipher.update(email, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+
+    // Return IV + encrypted data (both hex)
+    return iv.toString('hex') + ':' + encrypted;
+}
+function decryptEmail(encryptedText) {
+    if (!encryptedText) {
+        throw new Error("No encrypted text provided");
+    }
+
+    // URL-decode the encrypted string to handle '%3A'
+    const decodedText = decodeURIComponent(encryptedText); // This will convert '%3A' back to ':'
+
+    const algorithm = 'aes-256-cbc';
+    const secretKey = process.env.ENCRYPTION_SECRET_KEY;
+
+    // Split the decoded text into IV and encrypted data
+    const parts = decodedText.split(':');
+
+    // Ensure parts are correctly split
+    if (parts.length !== 2) {
+        throw new Error("Invalid encrypted text format");
+    }
+
+    const iv = Buffer.from(parts[0], 'hex'); // IV is the first part
+    const encrypted = parts[1]; // Encrypted data is the second part
+
+    if (!iv || !encrypted) {
+        throw new Error("Invalid IV or encrypted data");
+    }
+
+    try {
+        const decipher = crypto.createDecipheriv(algorithm, Buffer.from(secretKey, 'utf8'), iv);
+        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted; // Returns the original email
+    } catch (err) {
+        console.error('Decryption error:', err);
+        throw new Error("Failed to decrypt email");
+    }
+}
