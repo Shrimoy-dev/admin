@@ -303,8 +303,7 @@ class UserController {
                                const encryptedEmail = encryptEmail(user.email);
                            
                                // Build reset link
-                               const resetLink = `${process.env.FRONT_END_URL}/reset-password
-       ?q=${encodeURIComponent(encryptedEmail)}`;
+                               const resetLink = `${process.env.FRONT_END_URL}/reset-password?q=${encodeURIComponent(encryptedEmail)}`;
                
                                let emailData = { 
                                    name: user.fullName,
