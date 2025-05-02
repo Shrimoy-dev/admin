@@ -337,7 +337,7 @@ class UserController {
                             if (!req.body?.token?.trim()) {
                                 return requestHandler.throwError(400, 'Bad Request', 'Encrypted token is required.')();
                             }
-                            if (!req.body?.newPassword?.trim()) {
+                            if (!req.body?.password?.trim()) {
                                 return requestHandler.throwError(400, 'Bad Request', 'New password is required.')();
                             }
                             const encryptedEmail = req.body.token.trim();
@@ -356,7 +356,7 @@ class UserController {
                             // let random_pass = utils.betweenRandomNumber(10000000, 99999999);
                             // let readable_pass = random_pass.toString();
                             // random_pass = new User().generateHash(random_pass.toString());
-                            let userPass = new User().generateHash(req.body.newPassword);
+                            let userPass = new User().generateHash(req.body.password);
                             // Update user password in the database
                             let updatedUser = await User.findByIdAndUpdate(user._id, { password: userPass }).exec();
                     
