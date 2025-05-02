@@ -345,7 +345,7 @@ class UserController {
                             const userEmail = decryptEmail(encryptedEmail);
                     
                             // Find the user by decrypted email
-                            let roleDetails = await roleRepo.getByField({ role: "admin" });
+                            let roleDetails = await roleRepo.getByField({ role: "user" });
                             let user = await User.findOne({ email: userEmail, role: { $in: [roleDetails._id] } }).exec();
                     
                             if (!user) {
