@@ -9,6 +9,7 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const User = require('../../user/models/user.model');
 const userRepo = require('../../user/repositories/user.repository');
+const packageRepo = require('../../package/repositories/package.repository');
 const roleRepo = require('../../roles/repositories/role.repository');
 const utils = require(appRoot + '/helper/utils');
 const crypto = require('crypto');
@@ -117,7 +118,7 @@ class AdminController {
                 if (!req.body?.token?.trim()) {
                     return requestHandler.throwError(400, 'Bad Request', 'Encrypted token is required.')();
                 }
-                if (!req.body?.newPassword?.trim()) {
+                if (!req.body?.password?.trim()) {
                     return requestHandler.throwError(400, 'Bad Request', 'New password is required.')();
                 }
                 const encryptedEmail = req.body.token.trim();
@@ -136,7 +137,7 @@ class AdminController {
                 // let random_pass = utils.betweenRandomNumber(10000000, 99999999);
                 // let readable_pass = random_pass.toString();
                 // random_pass = new User().generateHash(random_pass.toString());
-                let userPass = new User().generateHash(req.body.newPassword);
+                let userPass = new User().generateHash(req.body.password);
                 // Update user password in the database
                 let updatedUser = await User.findByIdAndUpdate(user._id, { password: userPass }).exec();
         
@@ -225,6 +226,45 @@ class AdminController {
                     return requestHandler.throwError(404, 'Not Found', 'No users found.')();
                 } else {
                   return  requestHandler.sendSuccess(res, "User deleted successfully.")(user);
+                }
+               
+            } catch (error) {
+                return requestHandler.sendError(req, res, error);
+            }
+        }
+
+        async overview (req, res) {
+            try {
+                if (req.user.role.role !== 'admin') {
+                    return requestHandler.throwError(403, 'Forbidden', 'You are not authorized to access this resource.')();
+                }
+                let role = await roleRepo.getByField({ role: "user" });
+                let totalUsers = await userRepo.getUserCountByParam({
+                    isDeleted: false,
+                    status: 'Active',
+                    role: role._id
+                });
+                let totalInactiveUsers = await userRepo.getUserCountByParam({
+                    isDeleted: false,
+                    status: 'Inactive',
+                    role: role._id
+                });
+                let totalActiveUsers = await userRepo.getUserCountByParam({
+                    isDeleted: false,
+                    status: 'Active',
+                    role: role._id
+                });
+
+                let totalPackages = await userRepo.getUserCountByParam({
+                    isDeleted: false,
+                    status: 'Active',
+                    role: role._id,
+                    packageStatus: 'Active'
+                });
+                if (_.isNull(overview) && _.isEmpty(overview)) {
+                    return requestHandler.throwError(404, 'Not Found', 'No users found.')();
+                } else {
+                  return  requestHandler.sendSuccess(res, "User list fetched successfully.")(overview);
                 }
                
             } catch (error) {
