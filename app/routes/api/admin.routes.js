@@ -43,7 +43,7 @@ namedRouter.get('api.admin.user.packageDetails', '/admin/user-package-details', 
 
 /**
  * @swagger
- * :
+ * /admin/delete-user:
  *   post:
  *     summary: Delete User Account
  *     tags:
@@ -75,5 +75,29 @@ namedRouter.get('api.admin.user.packageDetails', '/admin/user-package-details', 
  *          description: Server Error
  */
 namedRouter.post('api.admin.user.delete', '/admin/delete-user', request_param.any(), adminController.deleteUser);
+
+/**
+ * @swagger
+ * /admin/overview-stats:
+ *   get:
+ *     summary: Overview Stats
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - Token: []
+ *     produces:
+ *       - application/json          
+ *     responses:
+ *       200:
+ *         description: Overview stats fetched successfully!
+ *       403:
+ *         description: No data found!
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Server Error
+ */
+
+namedRouter.get('api.admin.overview.stats', '/admin/overview-stats', request_param.any(), adminController.overview);
 
 module.exports = router;

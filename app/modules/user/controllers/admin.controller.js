@@ -241,30 +241,44 @@ class AdminController {
                 let role = await roleRepo.getByField({ role: "user" });
                 let totalUsers = await userRepo.getUserCountByParam({
                     isDeleted: false,
-                    status: 'Active',
                     role: role._id
                 });
-                let totalInactiveUsers = await userRepo.getUserCountByParam({
+                let inactiveUsers = await userRepo.getUserCountByParam({
                     isDeleted: false,
                     status: 'Inactive',
                     role: role._id
                 });
-                let totalActiveUsers = await userRepo.getUserCountByParam({
+                let activeUsers = await userRepo.getUserCountByParam({
                     isDeleted: false,
                     status: 'Active',
                     role: role._id
                 });
 
-                let totalPackages = await userRepo.getUserCountByParam({
+                let totalPackages = await packageRepo.getDocumentCount({
+                    isDeleted: false,
+                });
+                let activePackages = await packageRepo.getDocumentCount({
                     isDeleted: false,
                     status: 'Active',
-                    role: role._id,
-                    packageStatus: 'Active'
                 });
+                let inactivePackages = await packageRepo.getDocumentCount({
+                    isDeleted: false,
+                    status: 'Inactive',
+                });
+                console.log('inactivePackages', inactivePackages);
+                
+                let overview = {
+                    totalUsers: totalUsers || 0,
+                    inactiveUsers: inactiveUsers || 0,
+                    activeUsers: activeUsers || 0,
+                    totalPackages: totalPackages || 0,
+                    inactivePackages: inactivePackages|| 0,
+                    activePackages: activePackages || 0
+                };
                 if (_.isNull(overview) && _.isEmpty(overview)) {
-                    return requestHandler.throwError(404, 'Not Found', 'No users found.')();
+                    return requestHandler.throwError(404, 'Not Found', 'No stats found.')();
                 } else {
-                  return  requestHandler.sendSuccess(res, "User list fetched successfully.")(overview);
+                  return  requestHandler.sendSuccess(res, "Stats fetched successfully.")(overview);
                 }
                
             } catch (error) {
