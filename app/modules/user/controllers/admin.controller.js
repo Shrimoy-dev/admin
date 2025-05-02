@@ -11,6 +11,7 @@ const User = require('../../user/models/user.model');
 const userRepo = require('../../user/repositories/user.repository');
 const packageRepo = require('../../package/repositories/package.repository');
 const roleRepo = require('../../roles/repositories/role.repository');
+const userPackageRepo = require('../../userPackage/repositories/userPackage.repository');
 const utils = require(appRoot + '/helper/utils');
 const crypto = require('crypto');
 
@@ -283,6 +284,23 @@ class AdminController {
                
             } catch (error) {
                 return requestHandler.sendError(req, res, error);
+            }
+        }
+
+        async userInvestmentGraph (req, res) {
+            try {
+                if (req.user.role.role !== 'admin') {
+                    return requestHandler.throwError(403, 'Forbidden', 'You are not authorized to access this resource.')();
+                }
+                let investmentGraph = await userPackageRepo.getInvestmentGraph(req.query.id);
+                if (_.isNull(investmentGraph) && _.isEmpty(investmentGraph)) {
+                    return requestHandler.throwError(404, 'Not Found', 'No stats found.')();
+                } else {
+                  return  requestHandler.sendSuccess(res, "Stats fetched successfully.")(investmentGraph);
+                }
+            } catch (error) {
+                return requestHandler.sendError(req, res, error);
+                
             }
         }
 }

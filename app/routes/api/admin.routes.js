@@ -99,5 +99,27 @@ namedRouter.post('api.admin.user.delete', '/admin/delete-user', request_param.an
  */
 
 namedRouter.get('api.admin.overview.stats', '/admin/overview-stats', request_param.any(), adminController.overview);
+/**
+ * @swagger
+ * /admin/investment-graph:
+ *   get:
+ *     summary: Overview graph
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - Token: []
+ *     produces:
+ *       - application/json          
+ *     responses:
+ *       200:
+ *         description: Overview graph fetched successfully!
+ *       403:
+ *         description: No data found!
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Server Error
+ */
+namedRouter.get('api.admin.investment.graph', '/admin/investment-graph', request_param.any(), adminController.userInvestmentGraph);
 
 module.exports = router;
