@@ -13,6 +13,7 @@ const roleRepo = require('../../roles/repositories/role.repository');
 const packageRepo = require('../../package/repositories/package.repository');
 const userPackageRepo = require('../../userPackage/repositories/userPackage.repository');
 const userDevicesRepo = require('user_devices/repositories/user_devices.repository');
+const crypto = require('crypto');
 
 class UserController {
     constructor () {}
@@ -285,52 +286,52 @@ class UserController {
     // @Description: User forgot password
     */
 
-        async forgotPassword(req, res) {
-                try {
-                    if (!req.body?.email?.trim()) {
-                       return requestHandler.throwError(400, 'Bad Request', 'Email is required.')();
-                    } 
-                    req.body.email = req.body.email.trim().toLowerCase().toString();
-                    let roleDetails = await roleRepo.getByField({ role: "user" });
-                    let user = await User.findOne({ email: { $regex: '^' + req.body.email + '$', $options: 'i' }, role: { $in: [roleDetails._id] } }).exec();
-                    
-                    if (!user) {
-                        requestHandler.throwError(403, 'Bad Request', 'Oops! No user found. Kindly contact support.')();
-                    } else {
-            
-                            // Encrypt email
-                            const encryptedEmail = encryptEmail(user.email);
-                        
-                            // Build reset link
-                            const resetLink = `${process.env.FRONT_END_URL}/reset-password
-    ?q=${encodeURIComponent(encryptedEmail)}`;
-            
-                            let emailData = { 
-                                name: user.email,
-                                resetLink: resetLink // <-- send the reset link!
-                            };
-            
-                            let sendMail = await mailHelper.sendMail(
-                                `${project_name} Admin<${process.env.FROM_EMAIL}>`, 
-                                user.email, 
-                                `Forgot Password || ${project_name}`, 
-                                'admin-forgot-pass', 
-                                emailData
-                            );
-            
-                            if (sendMail) {
-                                requestHandler.sendSuccess(res, "Reset link sent via email.")();
-                            } else {
-                                requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
-                            }
-                        
-                    }
-                } catch (e) {
-                    console.log(e);
-                    
-                    return requestHandler.sendError(req, res, e);
-                }
-            }
+         async forgotPassword(req, res) {
+                   try {
+                       if (!req.body?.email?.trim()) {
+                          return requestHandler.throwError(400, 'Bad Request', 'Email is required.')();
+                       } 
+                       req.body.email = req.body.email.trim().toLowerCase().toString();
+                       let roleDetails = await roleRepo.getByField({ role: "user" });
+                       let user = await User.findOne({ email: { $regex: '^' + req.body.email + '$', $options: 'i' }, role: { $in: [roleDetails._id] } }).exec();
+                       
+                       if (!user) {
+                           requestHandler.throwError(403, 'Bad Request', 'Oops! No user found. Kindly contact support.')();
+                       } else {
+               
+                               // Encrypt email
+                               const encryptedEmail = encryptEmail(user.email);
+                           
+                               // Build reset link
+                               const resetLink = `${process.env.FRONT_END_URL}/reset-password
+       ?q=${encodeURIComponent(encryptedEmail)}`;
+               
+                               let emailData = { 
+                                   name: user.fullName,
+                                   resetLink: resetLink // <-- send the reset link!
+                               };
+               
+                               let sendMail = await mailHelper.sendMail(
+                                   `${project_name} Admin<${process.env.FROM_EMAIL}>`, 
+                                   user.email, 
+                                   `Forgot Password || ${project_name}`, 
+                                   'admin-forgot-pass', 
+                                   emailData
+                               );
+               
+                               if (sendMail) {
+                                   requestHandler.sendSuccess(res, "Reset link sent via email.")();
+                               } else {
+                                   requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();
+                               }
+                           
+                       }
+                   } catch (e) {
+                       console.log(e);
+                       
+                       return requestHandler.sendError(req, res, e);
+                   }
+               }
 
              async  resetPassword(req, res) {
                         try {
