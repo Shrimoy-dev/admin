@@ -43,38 +43,7 @@ const request_param = multer();
  *         description: Bad Request
  */
 namedRouter.get('api.termsAndConditions.data', '/terms-and-conditions/data', request_param.any(), termsController.getData);
-namedRouter.all('/admin*', auth.authenticateAPI);
-/**
- * @swagger
- * /admin/terms-update:
- *   post:
- *     summary: Update Terms and Conditions Data
- *     tags:
- *       - Admin
- *     security:
- *       - Token: []
- *     produces:
- *       - application/json
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - title
- *               - description
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *        200:
- *          description: Terms and Conditions updated successfully
- *        400:
- *         description: Bad Request
- */
-namedRouter.post('api.admin.terms.update', '/admin/terms-update', request_param.any(), termsController.updateData);
+
+
 
 module.exports = router;

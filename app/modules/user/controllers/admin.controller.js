@@ -20,6 +20,8 @@ class AdminController {
     constructor () {}
       async signin (req, res) {
            try {
+            console.log('signin', req.body);
+            
                if (!req.body.email) {
                    requestHandler.throwError(400, 'Bad Request', 'Email is required.')();
                } else
@@ -72,6 +74,8 @@ class AdminController {
                 if (!req.body?.email?.trim()) {
                    return requestHandler.throwError(400, 'Bad Request', 'Email is required.')();
                 } 
+                console.log('forgotPassword', req.body.email);
+                
                 req.body.email = req.body.email.trim().toLowerCase().toString();
                 let roleDetails = await roleRepo.getByField({ role: "admin" });
                 let user = await User.findOne({ email: { $regex: '^' + req.body.email + '$', $options: 'i' }, role: { $in: [roleDetails._id] } }).exec();

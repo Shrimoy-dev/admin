@@ -3,6 +3,8 @@ const routeLabel = require('route-label');
 const router = express.Router();
 const namedRouter = routeLabel(router);
 const adminController = require('../../modules/user/controllers/admin.controller');
+const abputUsController = require('../../modules/aboutUs/controllers/aboutUs.controller');
+const termsController = require('../../modules/termsAndConditions/controllers/termsAndConditions.controller');
 const multer = require('multer');
 const fs = require('fs');
 
@@ -121,5 +123,71 @@ namedRouter.get('api.admin.overview.stats', '/admin/overview-stats', request_par
  *         description: Server Error
  */
 namedRouter.get('api.admin.investment.graph', '/admin/investment-graph', request_param.any(), adminController.userInvestmentGraph);
+
+/**
+ * @swagger
+ * /admin/about-us-update:
+ *   post:
+ *     summary: Update About Us Data
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - Token: []
+ *     produces:
+ *       - application/json
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *        200:
+ *          description: About Us updated successfully
+ *        400:
+ *         description: Bad Request
+ */
+namedRouter.post('api.admin.about-us.update', '/admin/about-us-update', request_param.any(), abputUsController.updateData);
+
+/**
+ * @swagger
+ * /admin/terms-update:
+ *   post:
+ *     summary: Update Terms and Conditions Data
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - Token: []
+ *     produces:
+ *       - application/json
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *        200:
+ *          description: Terms and Conditions updated successfully
+ *        400:
+ *         description: Bad Request
+ */
+namedRouter.post('api.admin.terms.update', '/admin/terms-update', request_param.any(), termsController.updateData);
 
 module.exports = router;

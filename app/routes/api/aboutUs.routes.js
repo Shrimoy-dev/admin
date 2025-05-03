@@ -43,38 +43,7 @@ const request_param = multer();
  *         description: Bad Request
  */
 namedRouter.get('api.aboutUs.data', '/about-us/data', request_param.any(), aboutUsController.getData);
-namedRouter.all('/admin*', auth.authenticateAPI);
-/**
- * @swagger
- * /admin/about-us-update:
- *   post:
- *     summary: Update About Us Data
- *     tags:
- *       - Admin
- *     security:
- *       - Token: []
- *     produces:
- *       - application/json
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - title
- *               - description
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *        200:
- *          description: About Us updated successfully
- *        400:
- *         description: Bad Request
- */
-namedRouter.post('api.admin.about-us.update', '/admin/about-us-update', request_param.any(), aboutUsController.updateData);
+
+
 
 module.exports = router;
