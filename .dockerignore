@@ -1,0 +1,24 @@
+# Dependency folders
+node_modules/
+log/
+
+# Build artifacts & archives
+*.zip
+*.tgz
+*.gz
+
+# Environment and scripts
+.env
+*.sh
+
+# OS and editor metadata
+.DS_Store
+Thumbs.db
+
+# VCS
+.git
+.gitignore
+
+# Optional: test & doc files
+tests/
+*.md
