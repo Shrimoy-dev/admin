@@ -1,33 +1,32 @@
-# Stage 1: Build
-FROM node:22.15.0-slim AS builder
-
-# Set working directory
+# Stage 1: Build with dependencies
+FROM node:22-slim AS build
 WORKDIR /app
 
-# Copy package.json and package-lock.json first (to leverage Docker cache)
+# Install dependencies without dev packages
 COPY package*.json ./
+RUN npm ci --omit=dev
 
-# Install only production dependencies (omit dev dependencies)
-RUN npm ci --only=production
-
-# Copy the rest of the application code
+# Copy the rest of the code
 COPY . .
 
 # Stage 2: Production image
-FROM node:22.15.0-slim
-
-# Set working directory in the final container
+FROM node:22-slim
 WORKDIR /app
 
-# Copy only the necessary files from the build stage
-COPY --from=builder /app /app
+# Copy from the build stage
+COPY --from=build /app /app
 
-# Expose application port (adjust if different)
+# Create non-root user
+RUN useradd -m appuser
+
+# Use the non-root user
+USER appuser
+
+# Set environment
+ENV NODE_ENV=production
+
+# Expose the app port
 EXPOSE 3000
 
-# Use non-root user for security (optional)
-# RUN useradd -m appuser && chown -R appuser /app
-# USER appuser
-
-# Run the app
+# Start the app
 CMD ["node", "admin.js"]
