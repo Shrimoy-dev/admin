@@ -102,11 +102,67 @@ const userRepository = {
                     }
                 },
                 { "$unwind": "$user_role" },
+                //lookup to get user package details
+                {
+                    $lookup: {
+                        "from": "user_packages",
+                        "let": { userId: "$_id" },
+                        "pipeline": [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$userId", "$$userId"] },
+                                            { $eq: ["$isDeleted", false] }
+                                        ]
+                                    }
+                                }
+                            },
+                        ],
+                        "as": "user_packages"
+                    }
+                },
+                {
+                    $addFields: {
+                      totalAmount: {
+                        $reduce: {
+                          input: "$user_packages",
+                          initialValue: 0,
+                          in: { $add: ["$$value", "$$this.investment"] }
+                        }
+                      },
+                      latestCurrentPeriodStart: {
+                        $let: {
+                          vars: {
+                            maxDate: {
+                              $reduce: {
+                                input: "$user_packages",
+                                initialValue: null,
+                                in: {
+                                  $cond: [
+                                    { $gt: ["$$this.currentPeriodStart", "$$value"] },
+                                    "$$this.currentPeriodStart",
+                                    "$$value"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          in: { $ifNull: ["$$maxDate", ""] }
+                        }
+                      }
+                    }
+                  },
+                  
+                 
                 {
                     $group: {
                         '_id': '$_id',
+                        // user_packages: { $first: '$user_packages' },
                         'fullName': { $first: '$fullName' },
                         'email': { $first: '$email' },
+                        'date_of_deposit': { $first: '$latestCurrentPeriodStart' },
+                        'amount': { $first: '$totalAmount' },
                         'isOtpVerified': { $first: '$isOtpVerified' },
                         'isDeleted': { $first: '$isDeleted' },
                         'status': { $first: '$status' },
