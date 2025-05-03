@@ -355,7 +355,7 @@ const userRepository = {
                             {
                                 $project: {
                                     _id: 1,
-                                    currentPeriodStart: 1,
+                                    currentPeriodStart: { $ifNull: ["$currentPeriodStart", ""] },
                                     investment: 1,
                                     package: 1,
                                     monthlyData: {
