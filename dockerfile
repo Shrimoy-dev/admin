@@ -19,6 +19,9 @@ COPY --from=build /app /app
 # Create non-root user
 RUN useradd -m appuser
 
+# Set permissions for log directory
+RUN mkdir -p /app/log && chown -R appuser:appuser /app/log
+
 # Use the non-root user
 USER appuser
 
