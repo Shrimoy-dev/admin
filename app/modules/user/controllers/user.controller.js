@@ -31,6 +31,14 @@ class UserController {
             if (!req.body.password) {
                 requestHandler.throwError(400, 'Bad Request', 'Password is required.')();
             } else {
+                if (req.body.referralCode !== undefined && req.body.referralCode !== '') {
+                    let referredByUser = await userRepo.getByField({ userName: req.body.referralCode, isDeleted: false });
+                    if (!_.isNull(referredByUser) && !_.isEmpty(referredByUser)) {
+                        req.body.referralCode = req.body.referralCode;
+                    } else {
+                       return requestHandler.throwError(400, 'Bad Request', 'Invalid referral code!')();
+                    }
+                }
                 req.body.email = req.body.email.trim().toLowerCase();
                 req.body.userName= Math.floor(new Date().getTime() / 1000)
                 const userRole = await roleRepo.getByField({ role: "user" });
@@ -265,6 +273,8 @@ class UserController {
     */
    async dashboardData(req, res) {
         try {
+          
+            
             let userDetails = await userRepo.getById(req.user._id);
             if (!userDetails || userDetails.length == 0) {
                 requestHandler.throwError(400, 'Bad Request', 'User not found!')();

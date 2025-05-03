@@ -9,6 +9,7 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const userPackageRepo = require('../repositories/userPackage.repository');
 const packageRepo = require('../../package/repositories/package.repository');
+const userRepo = require('../../user/repositories/user.repository');
 
 class UserPackageController {
 constructor () {}
@@ -35,8 +36,19 @@ async save(req, res) {
                 return requestHandler.throwError(400, 'Bad Request', 'Investment amount must be a multiple of 100.')();
             } else {
                 req.body.userId = req.user._id;
+                let referralCode ='';
+                if (req.user?.referralCode && req.user?.referralCode !== '') {
+                    let referredByUser = await userRepo.getById({userName: req.user?.referralCode, isDeleted: false});
+                    if (!_.isNull(referredByUser) && !_.isEmpty(referredByUser)) {
+                    referralCode = req.user?.referralCode;
+                }
+            }
+                req.body.referralCode = referralCode;
                 let saveRecord = await userPackageRepo.save(req.body);
                 if (saveRecord && saveRecord._id) {
+                    await userRepo.updateById({
+                        referralCode:"" 
+                    }, req.user._id);
                     requestHandler.sendSuccess(res, "Package saved successfully.")(saveRecord);
                 } else {
                     requestHandler.throwError(400, 'Bad Request', 'Something went wrong!')();

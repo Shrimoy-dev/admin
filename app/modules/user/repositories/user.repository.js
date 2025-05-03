@@ -373,6 +373,45 @@ const userRepository = {
                                     }
                                 }
                             },
+                            //lookup to get referredby user data
+                            {
+                                $lookup: {
+                                    "from": "users",
+                                    let: { userName: "$referralCode" },
+                                    pipeline: [
+                                        {
+                                            $match: {
+                                                $expr: {
+                                                    $and: [
+                                                        { $eq: ["$userName", "$$userName"] },
+                                                        { $eq: ["$isDeleted", false] }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            $project: {
+                                                _id: "$_id",
+                                                email: "$title",
+                                                userName: "$userName",
+
+                                            }
+                                        }
+                                    ],
+                                    "as": "referred_by"
+                                }
+                            },
+                            {
+                                $unwind: {
+                                    path: "$referred_by",
+                                    preserveNullAndEmptyArrays: true
+                            }},
+                            
+                            {
+                                $unwind: {
+                                    path: "$package",
+                                    preserveNullAndEmptyArrays: true
+                            }},
                             //lookup to get package details
                             {
                                 $lookup: {
@@ -411,6 +450,7 @@ const userRepository = {
                             {
                                 $project: {
                                     _id: 1,
+                                    referred_by:1,
                                     currentPeriodStart: { $ifNull: ["$currentPeriodStart", ""] },
                                     investment: 1,
                                     package: 1,
