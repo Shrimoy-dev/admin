@@ -7,6 +7,7 @@ const bools = [true, false];
 const UserPackageSchema = new Schema({
    userId: { type: Schema.Types.ObjectId, ref: "user", default: null, index: true }, //by user
    packageId: { type: Schema.Types.ObjectId, ref: "package", default: null, index: true }, //by user
+   referralCode: { type: String, default: null }, //by user
    investment: { type: Number, default: 0 }, //set by user
    currentPeriodStart: { type: Date, default: null }, //set by admin
    monthlyData: [
