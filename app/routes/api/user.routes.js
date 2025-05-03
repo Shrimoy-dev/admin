@@ -51,23 +51,15 @@ const request_param = multer();
  *             required:
  *                 - email
  *                 - password
- *                 - first_name
- *                 - last_name
- *                 - fullName
+ *                 - referralCode
  *             properties:
  *                 email:
  *                     type: string 
  *                 password:
  *                     type: string
- *                 first_name:
- *                     type: string
- *                 last_name:
- *                     type: string
- *                 fullName:
- *                     type: string
- *                 phone:
- *                     type: string
  *                 packageId:
+ *                     type: string
+ *                 referralCode:
  *                     type: string
  *     responses:
  *        200:
