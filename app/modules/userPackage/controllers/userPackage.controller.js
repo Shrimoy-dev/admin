@@ -13,25 +13,26 @@ const packageRepo = require('../../package/repositories/package.repository');
 class UserPackageController {
 constructor () {}
 /*Method to save user saveData*/
-async save (req, res) {
+async save(req, res) {
     try {
-     
         if (!req.body?.packageId) {
             return requestHandler.throwError(400, 'Bad Request', 'Package ID is required.')();
         }
+
         if (!req.body?.investment) {
             return requestHandler.throwError(400, 'Bad Request', 'Investment amount is required.')();
         }
+
         let packageData = await packageRepo.getById(req.body.packageId);
         if (_.isNull(packageData) && _.isEmpty(packageData)) {
-
             return requestHandler.throwError(400, 'Bad Request', 'Package not found.')();
         } else {
-          
             if (req.body?.investment < packageData?.minAmount) {
                 return requestHandler.throwError(400, 'Bad Request', `Investment amount should be greater than ${packageData?.minAmount}`)();
             } else if (req.body?.investment > packageData?.maxAmount) {
                 return requestHandler.throwError(400, 'Bad Request', `Investment amount should be less than ${packageData?.maxAmount}`)();
+            } else if (req.body.investment % 100 !== 0) {
+                return requestHandler.throwError(400, 'Bad Request', 'Investment amount must be a multiple of 100.')();
             } else {
                 req.body.userId = req.user._id;
                 let saveRecord = await userPackageRepo.save(req.body);
@@ -42,14 +43,11 @@ async save (req, res) {
                 }
             }
         }
-
-   
-       
-   
     } catch (error) {
         return requestHandler.sendError(req, res, error);
     }
 };
+
 
 async  updatePackage(req, res) {
     try {
