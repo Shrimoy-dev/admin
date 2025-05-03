@@ -392,7 +392,7 @@ const userRepository = {
                                         {
                                             $project: {
                                                 _id: "$_id",
-                                                email: "$title",
+                                                email: "$email",
                                                 userName: "$userName",
 
                                             }
