@@ -463,7 +463,11 @@ const userRepository = {
                             {
                                 $project: {
                                     _id: 1,
-                                    referred_by:1,
+                                    referred_by:{
+                                        _id: { $ifNull: ["$referred_by._id", ""] },
+                                        email: { $ifNull: ["$referred_by.email", ""] },
+                                        userName: { $ifNull: ["$referred_by.userName", ""] }
+                                    },
                                     currentPeriodStart: { $ifNull: ["$currentPeriodStart", ""] },
                                     investment: 1,
                                     package: 1,
