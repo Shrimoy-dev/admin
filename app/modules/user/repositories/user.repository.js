@@ -118,6 +118,11 @@ const userRepository = {
                                     }
                                 }
                             },
+                            {
+                                $sort:{
+                                    _id:1
+                                }
+                            },
                         ],
                         "as": "user_packages"
                     }
@@ -129,6 +134,13 @@ const userRepository = {
                           input: "$user_packages",
                           initialValue: 0,
                           in: { $add: ["$$value", "$$this.investment"] }
+                        }
+                      },
+                      referral: {
+                        $cond: {
+                            if: { $gt: [{ $size: "$user_packages" }, 0] },
+                            then: { $arrayElemAt: ["$user_packages.referralCode", 0] },
+                            else: ""
                         }
                       },
                       latestCurrentPeriodStart: {
@@ -160,6 +172,7 @@ const userRepository = {
                         '_id': '$_id',
                         // user_packages: { $first: '$user_packages' },
                         'fullName': { $first: '$fullName' },
+                        'referral': { $first: '$referral' },
                         'email': { $first: '$email' },
                         'date_of_deposit': { $first: '$latestCurrentPeriodStart' },
                         'amount': { $first: '$totalAmount' },

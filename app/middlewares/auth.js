@@ -20,7 +20,7 @@ const mongoose = require('mongoose');
 
 module.exports = () => {
     const strategy = new Strategy(params, (payload, done) => {
-        console.log("JWT payload:", payload);
+      
 
         users.aggregate([
             { $match: {
@@ -392,10 +392,10 @@ module.exports = () => {
         },
          // This is for webservice jwt token check //
          authenticateAPI: (req, res, next) => {
-            console.log('api called');
+           
             
              passport.authenticate("jwt", config.auth.jwtSession, async (err, user) => {
-                console.log('api called',err,user);
+               
                 
                  if (err) {
                     return requestHandler.throwError(400, 'bad request', 'Please provide a vaid token, your token might have expired')({token_expired:true,auth: false});
